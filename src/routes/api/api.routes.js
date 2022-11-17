@@ -3,9 +3,11 @@ const { Router } = express;
 
 // import routerFaker from "../faker/productsFaker.routes.js";
 import routerProducts from "../products/products.routes.js";
+import routerCarts from "../cart/cart.routes.js"
 
 const router = Router();
 
+router.use("/cart", routerCarts);
 router.use("/productos", routerProducts);
 // router.use("/products-test", routerFaker);
 

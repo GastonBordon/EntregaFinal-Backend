@@ -13,20 +13,42 @@
 
 <div
   class="w-100 d-flex justify-content-center"
-  style="height: 50px, margin:2rem"
+  style="height: 70px"
 >
   <div
     id="header"
-    class="w-75 p-2 d-flex justify-content-between"
-    style="background-color: lightgray;"
+    style="background-color: rgb(193 180 255); height: 50px; margin-bottom: 2rem"
+      class="w-100"
   >
-    <h2 id="headerTitle">Bienvenido {{session.username}}</h2>
-    <img src="/img/1668385496956-css3.png" alt="Aca va el avatar">
-    <form action="/logout" method="GET">
-      <button type="submit" class="btn btn-danger btn-md" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        Logout
-      </button>
-      </form>
+    <nav class="navbar navbar-expand-lg d-flex flex-row h-100">
+      <div class="container-fluid h-100" style="align-content: center;">
+        <a class="navbar-brand" href="#">Eccomerce CoderHouse</a>
+          <form class="d-flex" role="search" style="margin: 0">
+            <input class="me-2" type="search" placeholder="Ingrese Producto" aria-label="Search">
+            {{!-- <button class="btn btn-outline-success" type="submit">Buscar productos</button> --}}
+          </form>
+          {{log productsButton}}
+          {{#if productsButton}}
+            <form action="/api/productos" method="GET" style="margin: 0">
+              <button type="submit" class="btn btn-primary btn-md">
+                Ver mas productos
+              </button>
+            </form>
+            {{else}}
+            <form action="/api/cart" method="GET" style="margin: 0">
+              <button type="submit" class="btn btn-primary btn-md">
+                Carrito
+              </button>
+            </form>
+          {{/if}}
+          <form action="/logout" method="GET" style="margin: 0">
+            <button type="submit" class="btn btn-danger btn-md" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+              Logout
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
   </div>
 </div>
 

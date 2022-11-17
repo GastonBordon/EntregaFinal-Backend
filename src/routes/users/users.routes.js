@@ -4,6 +4,7 @@ import upload from "../../utils/multer.js";
 const { Router } = express;
 import { passport, usersCollection } from '../../middlewares/passport/passport.middleware.js';
 import mongoose from 'mongoose'
+import { avisoNuevoUsuario } from "../../utils/nodemailer.js";
 
 const router = Router();
 
@@ -19,11 +20,13 @@ router.post("/login", passport.authenticate('login',
 ), (req, res) => {
   req.session.username = req.body.username;
   req.session.admin = true;
+  
   res.status(200).redirect("/api/productos");
 });
 
 
 router.get("/signup", async (req, res) => {
+
   res.render("signup", { layouts: "index" });
 });
 
@@ -33,6 +36,7 @@ router.post("/signup", passport.authenticate('signup', {
 }), (req, res) => {
   req.session.username = req.body.username;
   req.session.admin = true;
+  avisoNuevoUsuario(req.body)
   res.render("avatarUpload", { layouts: "index" });
   // res.status(200).redirect("/api/productos");
 })

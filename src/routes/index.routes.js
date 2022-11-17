@@ -9,9 +9,6 @@ const router = Router();
 router.get("/", (req, res) => {
   res.render("main", { layouts: "index"});
 })
-router.get("/home", (req, res) => {
-  res.render("main", {layouts: "index" })
-})
   .use("/api", routerApi)
   .use("/", routerUsers)
 

@@ -3,9 +3,7 @@ import authMiddleware from "../../middlewares/auth/auth.middleware.js";
 import upload from "../../utils/multer.js";
 const { Router } = express;
 import { passport, usersCollection } from '../../middlewares/passport/passport.middleware.js';
-import mongoose from 'mongoose'
 import { avisoNuevoUsuario } from "../../utils/nodemailer.js";
-
 const router = Router();
 
 
@@ -16,17 +14,15 @@ router.get("/login", authMiddleware, async (req, res) => {
 
 
 router.post("/login", passport.authenticate('login', 
-  {failureRedirect: '/autherror'}
+{failureRedirect: '/autherror'}
 ), (req, res) => {
   req.session.username = req.body.username;
   req.session.admin = true;
-  
   res.status(200).redirect("/api/productos");
 });
 
 
 router.get("/signup", async (req, res) => {
-
   res.render("signup", { layouts: "index" });
 });
 

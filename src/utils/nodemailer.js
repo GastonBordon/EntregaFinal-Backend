@@ -2,16 +2,17 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 import nodemailer from "nodemailer";
+
 async function avisoNuevoUsuario(newUser) {
-    let transporter = nodemailer.createTransport({
-        service: "gmail",
-        port: 587,
-        auth: {
-            user: process.env.NODEMAILER_USER,
-            pass: process.env.NODEMAILER_PASS,
-        },
-    });
-    
+let transporter = nodemailer.createTransport({
+service: "gmail",
+port: 587,
+auth: {
+    user: process.env.NODEMAILER_USER,
+    pass: process.env.NODEMAILER_PASS,
+},
+});
+
 let info = await transporter.sendMail({
 from: 'API notifications <NotificacionesAPI@backend.com>',
 to: process.env.NODEMAILER_ADMIN_EMAIL,

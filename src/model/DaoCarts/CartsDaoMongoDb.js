@@ -1,15 +1,21 @@
-import ContainerFirebase from "../../containers/ContainerFirebase.js";
+import ContainerMongoDb from '../../containers/ContainerMongoDb.js';
 
-class CartsDaoFirebase extends ContainerFirebase {
+class CartsDaoMongoDb extends ContainerMongoDb {
     constructor() {
-        super('carts')
+        super('carts', {
+            products: {
+                type: Array,
+                max: 100,
+            },
+            user: {
+                type: String,
+                required: true,
+            }
+        })
     }
 
     newCart() {
-        let cart = {}
-        cart.timestamp = Date.now()
-        cart.products = []
-        return cart
+        return {}
     }
 
     async changeCartProducts(idCart, newProductsList) {
@@ -25,8 +31,8 @@ class CartsDaoFirebase extends ContainerFirebase {
 
     async delCartProducts(idCart, idProductToDelete) {
         try {
-            this.getById(idCart).then((data)=>{
-            const updatedList = data.products.filter(product => product.id != idProductToDelete)
+        this.getById(idCart).then((data)=>{
+            const updatedList = data.products.filter(product => product._id != idProductToDelete)
             this.updateById(idCart, {products: updatedList})
         })
         } catch (error) {
@@ -36,5 +42,4 @@ class CartsDaoFirebase extends ContainerFirebase {
 
 }
 
-
-export default CartsDaoFirebase;
+export default CartsDaoMongoDb;

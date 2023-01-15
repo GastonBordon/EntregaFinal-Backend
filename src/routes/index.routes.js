@@ -11,6 +11,9 @@ router.get("/", (req, res) => {
 })
   .use("/api", routerApi)
   .use("/", routerUsers)
-
+router.get("/chat", (req, res) => {
+  res.render("chat", { layouts: "index", session: req.session});
+  })
 
 export default router;
+ 

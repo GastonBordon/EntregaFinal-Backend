@@ -27,6 +27,11 @@
             <input class="me-2" type="search" placeholder="Ingrese Producto" aria-label="Search">
             {{!-- <button class="btn btn-outline-success" type="submit">Buscar productos</button> --}}
           </form>
+          <form action="/chat" method="GET" style="margin: 0">
+              <button type="submit" class="btn btn-primary btn-md">
+                Chat
+              </button>
+            </form>
           {{log productsButton}}
           {{#if productsButton}}
             <form action="/api/productos" method="GET" style="margin: 0">
@@ -51,4 +56,5 @@
     </nav>
   </div>
 </div>
+
 

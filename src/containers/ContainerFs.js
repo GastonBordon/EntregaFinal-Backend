@@ -1,193 +1,78 @@
-import fs from "fs";
-class containerFs {
-    constructor(path, model) {
-        this.path = path;
-        this.model = model;
-        this.connect();
+//* Conection to Firebase */
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+import admin from 'firebase-admin'
+const serviceAcount = require("../databases/firebase/ecommerce-1950a-firebase-adminsdk-fxl4z-61219de2da.json") 
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAcount)
+})
+console.log("Firestore connected")
+
+class ContainerFirebase {
+    constructor(name) {
+        const db = admin.firestore()
+        this.query = db.collection(name)
     }
 
-    async connect() {
-        console.log("File System Connected");
-    }
-
-    //Create file if not exists
-    checkFile = async () => {
-        if (!fs.existsSync(this.path)) {
-            try {
-                fs.promises.writeFile(this.path, JSON.stringify(this.model, null, 2));
-            } catch (error) {
-                throw new Error("Error al crear el archivo");
-            }
-        }
-    };
-
-    readFile = async () => {
+    async getAllFile() {
         try {
-            await this.checkFile()
-            const data = await fs.promises.readFile(this.path, "utf-8");
-            return JSON.parse(data)
+            const data = await this.query.get()
+            const response = data.docs.map(document => ({
+                id: document.id,
+                ...document.data()
+            }))
+            return response
         } catch (error) {
-            throw new Error("Error al leer archivo");
-        }
-    };
-
-    writeFile = async (data) => {
-        try {
-            await fs.promises.writeFile(
-                this.path,
-                JSON.stringify(data, null, 2)
-            );
-
-        } catch (error) {
-            throw new Error("Error al escribir archivo");
+            throw new Error("Error al realizar lectura" + error)
         }
     }
+
+    async getById(id) {
+        try {
+            const doc = this.query.doc(id)
+            const response = await doc.get()
+            return {
+                id: response.id,
+                ...response.data()
+                }
+        } catch (error) {
+            throw new Error("Error al realizar lectura" + error)
+        }
+    }
+
+    async saveInFile(element) {
+        try {
+            const data = await this.query.add(element)
+            return data
+            return "Producto cargado correctamente"
+        } catch (error) {
+            throw new Error("Error al guardar en base de datos" + error)
+        }
+    }
+
+    async updateById(id, newValues) {
+        try {
+            const doc = this.query.doc(id)
+            const modifiedDoc = await doc.update(newValues)
+            return modifiedDoc
+        } catch (error) {
+            throw new Error("Error al actualizar base de datos" + error)
+        }
+    }
+
+    async deleteById(id) {
+        try {
+            const doc = this.query.doc(id)
+            const delDoc = await doc.delete()
+            return "Documento eliminado correctamente"
+        } catch (error) {
+            throw new Error("Error al eliminar id");
+        }
+    }
+
+
 }
 
-export default containerFs;
-
-// const fs = await import("fs");
-
-// class ContainerFs {
-//   constructor(path, model) {
-//     this.model = model;
-//     this.path = path;
-//   }
-
-// idAvailable(array){
-//     const sortedArray = array
-//       .slice() 
-//       .sort(function (a, b) {return a.id - b.id});
-//     let previousId = 0;
-//     for (let element of sortedArray) {
-//       if (element.id != (previousId + 1)) {
-//         return previousId + 1;
-//       }
-//       previousId = element.id;
-//     }
-//     return previousId + 1;
-//   }
-
-//   async readFile() {
-//     if (fs.existsSync(this.path)) {
-//       try {
-//         const data = await fs.promises.readFile(this.path, "utf-8");
-//         return JSON.parse(data);
-//       } catch (error) {
-//         throw new Error("Error al leer archivo");
-//       }
-//     } else {
-
-//       try {
-//         await fs.promises.writeFile(this.path, JSON.stringify(this.model, null, 2));
-//         const data = await fs.promises.readFile(this.path, "utf-8");
-//         return JSON.parse(data);
-//       } catch (error) {
-//         throw new Error("Error al escribir el archivo");
-//       }
-//     }
-//   }
-
-//   async getAllFile() {
-//     try {
-//       const data = await this.readFile();
-//       return data;
-//     } catch (error) {
-//       throw new Error("Error al obtener archivo");
-//     }
-//   }
-
-//   async saveInFile(element) {
-//     if(element.id){
-//       const data = await this.readFile();
-//       const newData = [...data, element];
-//       newData.sort((a, b) => a.id - b.id)
-//       await fs.promises.writeFile(this.path, JSON.stringify(newData, null, 2));
-//     }else{
-//       try {
-//         const data = await this.readFile();
-//       const available = this.idAvailable(data);
-//       const id = available
-
-//       const objectToAdd = { ...element, id: id};
-//       const newData = [...data, objectToAdd];
-//       await fs.promises.writeFile(this.path, JSON.stringify(newData, null, 2));
-//       return objectToAdd;
-//     } catch (error) {
-//       throw new Error("Error al guardar archivo");
-//     }}
-//   }
-
-//   async deleteAllFile() {
-//     try {
-//       await fs.promises.writeFile(this.path, JSON.stringify(this.model, null, 2));
-//     } catch (error) {
-//       throw new Error("Error al borrar archivo");
-//     }
-//   }
-
-//   async getById(id) {
-//     try {
-//       let elementsArray = await this.readFile();
-//       const foundElement = elementsArray.find((elem) => elem.id === Number(id));
-//       if (foundElement !== undefined) {
-//         return foundElement;
-//       } else {
-//         return null;
-//       }
-//     } catch (error) {
-//       throw new Error("Error al obtener id");
-//     }
-//   }
-
-//   async deleteById(id) {
-//     try {
-//       let foundProduct = await this.getById(id);
-//         if (!foundProduct) {
-//           res.status(404).json({
-//             error: "NOT FOUND 404!!! producto no encontrado",
-//           });
-//         } else {
-//       let dataArch = await this.readFile();
-//       let element = dataArch.find((elem) => elem.id === Number(id));
-//          if (element) {
-//         const dataArchFiltrado = dataArch.filter((elem) => elem.id !== Number(id));
-//         await this.saveInFile(dataArchFiltrado);
-//         await fs.promises.writeFile(
-//           this.path,
-//           JSON.stringify(dataArchFiltrado, null, 2),
-//           "utf-8"
-//         );
-//       } else {
-//         throw new Error("Elemento no encontrado");
-//       }}
-//     } catch (error) {
-//       throw new Error("Error al eliminar id");
-//     }
-//   }
-
-//   async updateById(id, newValues) {
-//     let foundProduct = await this.getById(id);
-//     if (!foundProduct) {
-//         res.status(404).json({
-//             error: "NOT FOUND 404!! producto no encontrado!!",
-//         });
-//     } else {
-//         for (const element in foundProduct) {
-//             for (const elem in newValues) {
-//                 if (element === elem) {
-//                     foundProduct[element] = newValues[elem];
-//                 }
-//             }
-//         }
-//         foundProduct.timestamp = Date.now()
-//         await this.deleteById(id);
-//         await this.saveInFile(foundProduct);
-//     }
-// }
 
 
-
-// }
-
-// export default ContainerFs;
+export default ContainerFirebase;

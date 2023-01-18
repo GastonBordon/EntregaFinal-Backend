@@ -22,3 +22,4 @@ const addQuantity = (products) => {
   }
 
 export {isValidePassword, createHash, addQuantity};
+

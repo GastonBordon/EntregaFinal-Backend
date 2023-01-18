@@ -1,5 +1,5 @@
 {{#if session}}
-        {{>header productsButton='true'}}
+        {{>header productsButton='true' ordersButton='true'}}
     <div class="container w-100 d-flex flex-column justify-content-center">   
         <div class="w-100 d-flex align-items-center justify-content-center">
             <div class="w-75 d-flex flex-column align-items-center justify-content-center">
@@ -7,39 +7,40 @@
                 <table class="table tablaProductos col-md-4 ">
                     <thead>
                         <tr class="table-dark">
-                        {{!-- <th scope="col" class="text-center align-middle">Id</th> --}}
                         <th scope="col" class="text-center align-middle"></th>
+                        <th scope="col" class="text-center align-middle">Cantidad</th>
                         <th scope="col" class="text-center align-middle">Nombre</th>
                         <th scope="col" class="text-center align-middle">Precio</th>
-                        <th scope="col" class="text-center align-middle" >Foto</th>
+                        <th scope="col" class="text-center align-middle">Foto</th>
                         </tr>
                     </thead>
-                    <tbody id="listadoProductos">
-                        {{#each products}}
-                        {{#each this}}
+                    <tbody id="listadoProductosCarrito">
+                        <input type="text"  style="display: none;" value={{cartId}} id="cart">
+                        {{#each cartsProducts}}
                             {{#if this}}
-                            {{#if this.titulo}}
-                                <tr class="text-center align-middle">
-                                    {{!-- <th scope="row" class="text-center align-middle">{{_id}}</th> --}}
-                                    <td class="text-center align-middle">
-                                    <form action="/api/cart/{{_id}}" method="POST">
-                                    <input name="product" value={{this}} style="display: none;"/>
-                                        <button type="submit" class="btn btn-primary btn-sm">
-                                        Eliminar del carrito
-                                        </button>
-                                    </form>
-                                    </td>
-                                    <td class="text-center align-middle">{{titulo}}</td>
-                                    <td class="text-center align-middle">$ {{precio}}</td>
-                                    <td class="text-center align-middle"><img src="{{miniatura}}" alt="{{titulo}}" style="width:3rem"></td>
-                                </tr>
+                                {{#if titulo}}
+                                    <tr class="text-center align-middle">
+                                        {{!-- <th scope="row" class="text-center align-middle">{{_id}}</th> --}}
+                                        <td class="text-center align-middle">
+                                        <form onsubmit="deleteFromCart(this)" id={{_id}}>
+                                        <input name="product" value={{this}} style="display: none;"/>
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                            Eliminar del carrito
+                                            </button>
+                                        </form>
+                                        </td>
+                                        <td class="text-center align-middle">{{quantity}}</td>
+                                        <td class="text-center align-middle">{{titulo}}</td>
+                                        <td class="text-center align-middle">$ {{precio}}</td>
+                                        <td class="text-center align-middle"><img src="{{miniatura}}" alt="{{titulo}}" style="width:3rem"></td>
+                                    </tr>
+                                {{/if}}
                             {{/if}}
-                            {{/if}}
-                        {{/each}}
                         {{/each}}
                     </tbody>
                 </table>
-                <form style="margin: 0">
+                <form style="margin: 0" action="/api/orders/" method="post">
+                    <input type="text" style="display: none;" value={{cartId}} name="cartId" id="cartId">
                     <button type="submit" class="btn btn-primary btn-md">
                         Finalizar compra
                     </button>

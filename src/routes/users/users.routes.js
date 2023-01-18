@@ -73,3 +73,4 @@ router.post("/uploadavatar", upload.single('avatar'), async (req, res, next) =>{
   res.status(200).redirect("/home");
 })
 export default router;
+

@@ -40,6 +40,16 @@ class CartsDaoMongoDb extends ContainerMongoDb {
         }
     }
 
+    async findByBuyer(user){
+        try {
+            const cart = await this.collection.findOne({ user: user }).exec()
+        return cart
+    }
+    catch (error) {
+        throw new Error("Error al buscar el carrito")
+    }
+    }
+
 }
 
 export default CartsDaoMongoDb;

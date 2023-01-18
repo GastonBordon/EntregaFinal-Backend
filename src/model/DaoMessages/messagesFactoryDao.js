@@ -1,16 +1,16 @@
-// import messagesDaoFs from "./productsDaoFs.js"
-import MessagesDaoMongoDb from "./MessagesDaoMongoDb.js"
-class messagesFactoryDAO {
+import productsDaoFs from "./productsDaoFs.js"
+
+class productsFactoryDAO {
     static get(type) {
         switch (type) {
-            // case 'fs':
-            //     return new messagesDaoFs("./src/DB/fs/mensajes.txt", [])
-            case 'mongo':
-                return new MessagesDaoMongoDb()
+            case 'fs':
+                return new productsDaoFs("./src/DB/fs/products.txt", [])
+            // case 'MONGO':
+            //     return new NoticiasDBMongoDAO('miBase', 'noticias')
             default:
-                return new messagesDaoFs()
+                return new productsDaoFs()
         }
     }
 }   
 
-export default messagesFactoryDAO
+export default productsFactoryDAO

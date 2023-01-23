@@ -1,5 +1,6 @@
 import express from "express"
 import mainRouter from "./routes/index.routes.js";
+import cookieParser from "cookie-parser";
 import * as dotenv from 'dotenv'
 dotenv.config()
 import path from 'path';
@@ -9,13 +10,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.use(cookieParser());
 const PORT = process.env.PORT;
 
 const { Server: HttpServer } = await import("http");
 const httpServer = new HttpServer(app);
 const { Server: SocketServer } = await import("socket.io");
-// const {normalizeData: normalize} = await import("./normalizr/normalizr.js");
-import messagesApiContainer from './api/Messages.api.js'
+import messagesApiContainer from './api/messages.api.js'
 const messagesApi = new messagesApiContainer()
 const initSocket =()=>{
 const io = new SocketServer(httpServer);
@@ -25,10 +26,8 @@ const io = new SocketServer(httpServer);
     socket.emit("chat", dataMessages);
 
     socket.on("nuevoMensaje", async (data) => {
-      console.log(data)
       await messagesApi.saveMessage(data);
       let dataMessages = await messagesApi.getAllFile();
-      // dataMessages = await normalize.dataNormalizer(dataMessages);
       io.sockets.emit("chat", dataMessages);
     });
   });
@@ -67,8 +66,6 @@ app.engine(
 import session from "express-session"
 
 //* ------- Mongo ---------*/
-// const MongoStore = require('connect-mongo')
-// const advancedOptions = {useNewUrlParser:true, useUnifiedTopology: true}
 
 app.use(session({
     secret: process.env.SESSION_SECRET || '123456',
@@ -80,11 +77,8 @@ app.use(session({
     }
 }))
 
-// app.use(cookieParser(process.env.COOKIES_SECRET || '123456'))
-
 //* ---------------------------------- */
 
-// app.use("/api", mainRouter);
 app.use("/", mainRouter);
 
 
@@ -105,6 +99,3 @@ httpServer.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
 });
 
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port: ${PORT}`);
-// });

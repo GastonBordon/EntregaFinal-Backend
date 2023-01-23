@@ -3,7 +3,7 @@ dotenv.config()
 
 import productsFactoryDAO from "./DaoProducts/productsFactoryDao.js"
 import cartFactoryDAO from "./DaoCarts/cartsFactoryDao.js"
-import OrdersFactoryDAO from "./DaoOrders/OrdersFactoryDAO.js"
+import OrdersFactoryDAO from "./DaoOrders/ordersFactoryDao.js"
 import messagesFactoryDAO from './DaoMessages/messagesFactoryDao.js'
 
 let productsDao = productsFactoryDAO.get(process.env.DB_SERVICE)

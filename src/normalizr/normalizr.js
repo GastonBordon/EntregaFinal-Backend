@@ -1,4 +1,4 @@
-import normalizr from "normalizr"
+import normalizr from "normalizr";
 const {
     normalize,
     denormalize,

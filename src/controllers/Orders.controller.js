@@ -1,5 +1,6 @@
-import cartApiContainer from "../api/Carts.api.js"
-import ordersApiContainer from "../api/Orders.api.js"
+import cartApiContainer from "../api/carts.api.js"
+import ordersApiContainer from "../api/orders.api.js"
+import { avisoNuevaOrden } from "../utils/nodemailer.js"
 
 const ordersAPI = new ordersApiContainer()
 const cartsApi = new cartApiContainer()
@@ -8,8 +9,24 @@ class ordersController {
     createOrder = async (req, res) => {
         try {
             const cart = await cartsApi.getById(req.body.cartId)
-            const orderId = await ordersAPI.createOrder(cart)
+            const order = await ordersAPI.createOrder(cart)
             await cartsApi.deleteCart(req.body.cartId)
+            avisoNuevaOrden(order)
+            res.json({data: order})
+        } catch (error) {
+            res.status(500).json({
+                msg: "No se pudo crear la orden"
+            })
+        }
+    }
+
+    createOrderRedirect = async (req, res) => {
+        try {
+            const cart = await cartsApi.getById(req.body.cartId)
+            const order = await ordersAPI.createOrder(cart)
+            await cartsApi.deleteCart(req.body.cartId)
+            avisoNuevaOrden(order)
+            res.redirect("/orders")
         } catch (error) {
             res.status(500).json({
                 msg: "No se pudo crear la orden"
@@ -30,19 +47,6 @@ class ordersController {
         }
     }
 
-    getOrderByBuyer = async (req, res) => {
-        try {
-            const data= []
-            // const order = await ordersAPI.getByBuyer(req.session.user);
-            res.json({
-                data: order,
-            })
-        } catch (error){
-            res.json({
-                error: `Orden no encontrada`,
-            });
-        }
-    }  
     
     deleteOrderById = async (req, res) => {
         try {
